@@ -1,0 +1,29 @@
+{
+    "name": "cloudmyn/logger",
+    "description": "none",
+    "type": "library",
+    "license": "MIT",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "CloudMyn\\Logger\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "CloudMyn",
+            "email": "muhabdi47.com@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CloudMyn\\Logger\\LoggerServiceProvider"
+            ]
+        },
+        "aliases": {
+            "Logger": "CloudMyn\\Logger\\Facade\\Logger"
+        }
+    },
+    "minimum-stability": "dev"
+}
