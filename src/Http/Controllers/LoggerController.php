@@ -16,20 +16,19 @@ class LoggerController  extends Controller
 
         if (empty($log_files)) $filename = null;
 
-        try {
-            return view('cloudmyn_logger::logger-show', [
-                'files' =>  $log_files,
-                'logs'  =>  $log_data,
-                'c_file'  =>  $filename,
-            ]);
-        } catch (\Throwable $th) {
-            return "Error: " . $th->getMessage();
-        }
+        return view('cloudmyn_logger::logger-show', [
+            'files' =>  $log_files,
+            'logs'  =>  $log_data,
+            'c_file'  =>  $filename,
+        ]);
     }
 
-    public function delete(string $filename)
+    public function delete(?string $filename = null)
     {
+        if (is_null($filename)) return redirect()->back();
+
         Logger::delete($filename);
+
         return redirect()->route('logger.show');
     }
 }
