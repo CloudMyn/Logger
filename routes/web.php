@@ -1,6 +1,5 @@
 <?php
 
-use CloudMyn\Logger\Facade\Logger;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/show/{filename?}', '\CloudMyn\Logger\Http\Controllers\LoggerController@show')->name('logger.show');
