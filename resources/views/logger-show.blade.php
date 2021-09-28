@@ -14,9 +14,16 @@ use function CloudMyn\Logger\Helpers\str_limit;
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.1/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/dataTables.bulma.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
+    </script>
 
     @empty($c_file)
 
@@ -27,6 +34,15 @@ use function CloudMyn\Logger\Helpers\str_limit;
         <title>Logger - File: {{ $c_file }}</title>
 
     @endempty
+
+    <style>
+        .modal-body .mt-2 label {
+            font-size: 18px;
+            text-transform: uppercase;
+            color: #424242;
+        }
+
+    </style>
 
 </head>
 
@@ -65,6 +81,7 @@ use function CloudMyn\Logger\Helpers\str_limit;
     <table id="logger" class="table is-striped" style="width:100%">
         <thead>
             <tr>
+                <th>id</th>
                 <th>class</th>
                 <th>mesage</th>
                 <th>ip address</th>
@@ -77,6 +94,7 @@ use function CloudMyn\Logger\Helpers\str_limit;
         <tbody>
             @foreach ($logs as $log)
                 <tr>
+                    <td>{{ str_limit($log['id'], 10, '...') }}</td>
                     <td>{{ str_limit($log['class'], 25, '...') }}</td>
                     <td>{{ str_limit($log['message'], 25, '...') }}</td>
                     <td>{{ $log['user_ip'] }}</td>
@@ -84,7 +102,95 @@ use function CloudMyn\Logger\Helpers\str_limit;
                     <td>{{ str_limit($log['file_name'], 25, '...') . ':' . $log['file_line'] }}</td>
                     <td>{{ date('Y-M-d s:i', (int) $log['create_at']) }}</td>
                     <td>
-                        <a href="#" class="badge bg-primary">detail</a>
+                        <a href="{{ route('logger.detail', [$c_file, $log['id']]) }}"
+                            class="btn btn-warning btn-sm">show</a>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#m{{ $loop->count }}">
+                            detail
+                        </button>
+
+                        {{-- Modal --}}
+                        <div class="modal fade" id="m{{ $loop->count }}" data-bs-backdrop="static"
+                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="staticBackdropLabel">
+                                            {{ $log['class'] . ':' . $log['code'] }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="input-group">
+                                            <span class="input-group-text " id="id">id</span>
+                                            <input type="text" class="form-control disabled" disabled
+                                                placeholder="id" aria-describedby="id" value="{{ $log['id'] }}">
+                                        </div>
+                                        <div class="mt-2">
+                                            <label for="_message" class="form-label"><b>Message</b></label>
+                                            <input type="text" id="_message" class="form-control" disabled
+                                                value="{{ $log['message'] }}">
+                                        </div>
+                                        <div class="mt-2">
+                                            <label for="_file" class="form-label"><b>File</b></label>
+                                            <input type="text" id="_file" class="form-control" disabled
+                                                value="{{ $log['file_name'] . ':' . $log['file_line'] }}">
+                                        </div>
+                                        <div class="mt-2">
+                                            <label for="_user_id" class="form-label"><b>User Id</b></label>
+                                            <input type="text" id="_user_id" class="form-control" disabled
+                                                value="{{ $log['user_id'] }}">
+                                        </div>
+                                        <div class="mt-2">
+                                            <label for="_user_ip" class="form-label"><b>IP address</b></label>
+                                            <input type="text" id="_user_ip" class="form-control" disabled
+                                                value="{{ $log['user_ip'] }}">
+                                        </div>
+                                        <div class=" mt-2">
+                                            <label for="stack_trace" class="form-label"><b>Stack
+                                                    Trace</b></label>
+                                            <div>
+                                                @php
+                                                    try {
+                                                        $traces = json_decode($log['trace']);
+                                                    } catch (\Throwable $th) {
+                                                        $traces = [];
+                                                    }
+                                                @endphp
+
+                                                @forelse ($traces as $trace)
+                                                    <div class="alert alert-warning">
+
+                                                        @if (method_exists($trace, 'class') && method_exists($trace, 'function'))
+                                                            <h5>{{ $trace->class . ':' . $trace->function }}</h5>
+                                                        @elseif(method_exists($trace, 'function'))
+                                                            <h5>{{ $trace->function }}</h5>
+                                                        @endif
+
+                                                        <p class="m-0">
+                                                            @if (method_exists($trace, 'file') && method_exists($trace, 'line'))
+                                                                {{ $trace->file . ':' . $trace->line }}
+                                                            @else
+                                                                '-'
+                                                            @endif
+                                                        </p>
+                                                    </div>
+                                                @empty
+                                                    <div class="alert alert-info">No stack traces available!</div>
+                                                @endforelse
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- End Modal --}}
+
                     </td>
                 </tr>
             @endforeach
@@ -104,9 +210,8 @@ use function CloudMyn\Logger\Helpers\str_limit;
 
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.3/js/dataTables.bulma.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
 
 <script>
     $(document).ready(function() {
