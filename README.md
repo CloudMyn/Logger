@@ -10,13 +10,13 @@ This package allow you to manage your error log in a simple way
 
 You may copy the code below, and paste into your project terminal, we are assuming your machine have a composer installed 
 
-  composer require cloudmyn/logger
+    composer require cloudmyn/logger
   
 ## Usage
 
 Fisrt you have to publish the config file:
 
-  php artisan vendor:publish --provider="CloudMyn\Logger\LoggerServiceProvider"
+    php artisan vendor:publish --provider="CloudMyn\Logger\LoggerServiceProvider"
 
 Goto the path **App\Exceptions\Handler.php** and add this code **Logger::log($throwable, auth()->user());** inside the report method
 
