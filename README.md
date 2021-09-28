@@ -55,4 +55,3 @@ class Handler extends ExceptionHandler
 ```
 
 Now you can visit this url **http://locahost:8000/logger/show** where the logs is listed
-Basically Thats all you need!
