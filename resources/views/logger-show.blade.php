@@ -102,8 +102,6 @@ use function CloudMyn\Logger\Helpers\str_limit;
                     <td>{{ str_limit($log['file_name'], 25, '...') . ':' . $log['file_line'] }}</td>
                     <td>{{ date('Y-M-d s:i', (int) $log['create_at']) }}</td>
                     <td>
-                        <a href="{{ route('logger.detail', [$c_file, $log['id']]) }}"
-                            class="btn btn-warning btn-sm">show</a>
                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                             data-bs-target="#m{{ $loop->count }}">
                             detail
