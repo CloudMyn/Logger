@@ -70,7 +70,7 @@ use function CloudMyn\Logger\Helpers\str_limit;
     @else
 
         <div class="d-flex mb-4">
-            <a class="btn btn-danger" href="{{ route('logger.delete', $c_file) }}">
+            <a class="btn btn-danger" href="{{ route('logger.delete', $c_file) }}" onclick="return confirm('Yakin!!')">
                 Remove File: {{ $c_file }}
             </a>
         </div>
@@ -102,8 +102,12 @@ use function CloudMyn\Logger\Helpers\str_limit;
                     <td>{{ str_limit($log['file_name'], 25, '...') . ':' . $log['file_line'] }}</td>
                     <td>{{ date('Y-M-d s:i', (int) $log['create_at']) }}</td>
                     <td>
+                        @php
+                            $log_id = $log['id'];
+                        @endphp
                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#m{{ $loop->count }}">
+                            data-bs-target="#m{{ $loop->count }}"
+                            onclick='fetchTrace( "{{ $c_file }}", "{{ $log_id }}", "modal-stacktrace-{{ $loop->count }}" )'>
                             detail
                         </button>
 
@@ -145,41 +149,8 @@ use function CloudMyn\Logger\Helpers\str_limit;
                                             <input type="text" id="_user_ip" class="form-control" disabled
                                                 value="{{ $log['user_ip'] }}">
                                         </div>
-                                        <div class=" mt-2">
-                                            <label for="stack_trace" class="form-label"><b>Stack
-                                                    Trace</b></label>
-                                            <div>
-                                                @php
-                                                    try {
-                                                        $traces = json_decode($log['trace']);
-                                                    } catch (\Throwable $th) {
-                                                        $traces = [];
-                                                    }
-                                                @endphp
-
-                                                @forelse ($traces as $trace)
-                                                    <div class="alert alert-warning">
-
-
-
-                                                        @if (property_exists($trace, 'class') && property_exists($trace, 'function'))
-                                                            <h5>{{ $trace->class . ':' . $trace->function }}</h5>
-                                                        @elseif(property_exists($trace, 'function'))
-                                                            <h5>{{ $trace->function }}</h5>
-                                                        @endif
-
-                                                        <p class="m-0">
-                                                            @if (property_exists($trace, 'file') && property_exists($trace, 'line'))
-                                                                {{ $trace->file . ':' . $trace->line }}
-                                                            @else
-                                                                '-'
-                                                            @endif
-                                                        </p>
-                                                    </div>
-                                                @empty
-                                                    <div class="alert alert-info">No stack traces available!</div>
-                                                @endforelse
-                                            </div>
+                                        <div class=" mt-2" id="modal-stacktrace-{{ $loop->count }}">
+                                            Loading...
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -217,6 +188,19 @@ use function CloudMyn\Logger\Helpers\str_limit;
     $(document).ready(function() {
         $('#logger').DataTable();
     });
+
+    function fetchTrace(filename, id, elId) {
+        $.ajax({
+            url: `\\logger\\ajax\\trace\\${filename}\\${id}`,
+            type: 'GET',
+            success: function(data) {
+                document.getElementById(elId).innerHTML = data;
+            },
+            error: function(error) {
+                console.error(error);
+            }
+        });
+    }
 </script>
 
 </body>
