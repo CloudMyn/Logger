@@ -23,6 +23,23 @@ class LoggerController  extends Controller
         ]);
     }
 
+    public function ajaxTrace(string $filename, string $id)
+    {
+        $log = Logger::whereId($filename, $id);
+
+        if (count($log) === 0) return "No-Data";
+
+        try {
+            $traces = json_decode($log[0]['trace']);
+        } catch (\Throwable $th) {
+            $traces = [];
+        }
+
+        return view('cloudmyn_logger::components.stack-trace', [
+            'traces'   =>  $traces,
+        ]);
+    }
+
     public function delete(?string $filename = null)
     {
         if (is_null($filename)) return redirect()->back();

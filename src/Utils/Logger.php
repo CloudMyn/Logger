@@ -4,6 +4,7 @@ namespace CloudMyn\Logger\Utils;
 
 use CloudMyn\Logger\Exceptions\LogException;
 use Illuminate\Database\Eloquent\Model;
+use phpDocumentor\Reflection\PseudoTypes\True_;
 
 use function CloudMyn\Logger\Helpers\logger_path;
 
@@ -102,9 +103,10 @@ class Logger
      *  Method for get the error logs
      *
      *  @param  string  $file_name
+     *  @param  string  $include_trace_and_previous
      *  @return array
      */
-    public function get(string $file_name): array
+    public function get(string $file_name, bool $include_trace_and_previous = false): array
     {
         $file_path  =   logger_path() . DIRECTORY_SEPARATOR . $file_name;
 
@@ -135,7 +137,13 @@ class Logger
                 }
 
                 if (preg_match_all("/^([\w]+:\s+.+;)$/", $line) === 1) {
+
                     $key    =   explode(":", $line)[0];
+
+                    if ($include_trace_and_previous === false) {
+                        if ($key === "trace" or $key === "previuos") continue;
+                    }
+
                     $value  =   trim(preg_split("/^([\w]+:)/", $line)[1]);
 
                     // remove semicolon
@@ -264,7 +272,7 @@ class Logger
      */
     protected function find(string $file_name, string $key, string $value): array
     {
-        $logs       =   $this->get($file_name);
+        $logs       =   $this->get($file_name, true);
         $matches    =   [];
 
         array_filter($logs, function (array $data) use ($key, $value, &$matches) {
