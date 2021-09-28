@@ -160,14 +160,16 @@ use function CloudMyn\Logger\Helpers\str_limit;
                                                 @forelse ($traces as $trace)
                                                     <div class="alert alert-warning">
 
-                                                        @if (method_exists($trace, 'class') && method_exists($trace, 'function'))
+
+
+                                                        @if (property_exists($trace, 'class') && property_exists($trace, 'function'))
                                                             <h5>{{ $trace->class . ':' . $trace->function }}</h5>
-                                                        @elseif(method_exists($trace, 'function'))
+                                                        @elseif(property_exists($trace, 'function'))
                                                             <h5>{{ $trace->function }}</h5>
                                                         @endif
 
                                                         <p class="m-0">
-                                                            @if (method_exists($trace, 'file') && method_exists($trace, 'line'))
+                                                            @if (property_exists($trace, 'file') && property_exists($trace, 'line'))
                                                                 {{ $trace->file . ':' . $trace->line }}
                                                             @else
                                                                 '-'
