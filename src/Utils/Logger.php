@@ -27,6 +27,18 @@ class Logger
     }
 
     /**
+     *  Method for find a log data, base on its id
+     *
+     *  @param  string  $file_name
+     *  @param  string  $value
+     *  @return array
+     */
+    public function whereId(string $file_name, string $value): array
+    {
+        return $this->find($file_name, 'id', $value);
+    }
+
+    /**
      *  Method for find a log data, base on its class
      *
      *  @param  string  $file_name
@@ -171,9 +183,15 @@ class Logger
 
             $create_at  =   time();
 
+            $str = base64_encode($exception_class);
+            $str = str_replace("=", '1', $str);
+
+            $exception_id = uniqid("$str.");
+
             $content = <<<EOD
             \n
             [Exception:Start]
+            id:         $exception_id;
             class:      $exception_class;
             message:    $exception_message;
             user_ip:    $user_ip;
