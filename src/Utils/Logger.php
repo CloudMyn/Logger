@@ -32,11 +32,13 @@ class Logger
      *
      *  @param  string  $file_name
      *  @param  string  $value
+     *  @param  bool    $ignore_trace_and_prev
+     *
      *  @return array
      */
-    public function whereId(string $file_name, string $value): array
+    public function whereId(string $file_name, string $value, bool $ignore_trace_and_prev = false): array
     {
-        return $this->find($file_name, 'id', $value);
+        return $this->find($file_name, 'id', $value, $ignore_trace_and_prev);
     }
 
     /**
@@ -44,11 +46,13 @@ class Logger
      *
      *  @param  string  $file_name
      *  @param  string  $value
+     *  @param  bool    $ignore_trace_and_prev
+     *
      *  @return array
      */
-    public function whereClass(string $file_name, string $value): array
+    public function whereClass(string $file_name, string $value, bool $ignore_trace_and_prev = false): array
     {
-        return $this->find($file_name, 'class', $value);
+        return $this->find($file_name, 'class', $value, $ignore_trace_and_prev);
     }
 
     /**
@@ -56,11 +60,13 @@ class Logger
      *
      *  @param  string  $file_name
      *  @param  string  $value
+     *  @param  bool    $ignore_trace_and_prev
+     *
      *  @return array
      */
-    public function whereMessage(string $file_name, string $value): array
+    public function whereMessage(string $file_name, string $value, bool $ignore_trace_and_prev = false): array
     {
-        return $this->find($file_name, 'message', $value);
+        return $this->find($file_name, 'message', $value, $ignore_trace_and_prev);
     }
 
     /**
@@ -68,11 +74,13 @@ class Logger
      *
      *  @param  string  $file_name
      *  @param  string  $value
+     *  @param  bool    $ignore_trace_and_prev
+     *
      *  @return array
      */
-    public function whereIp(string $file_name, string $value): array
+    public function whereIp(string $file_name, string $value, bool $ignore_trace_and_prev = false): array
     {
-        return $this->find($file_name, 'user_ip', $value);
+        return $this->find($file_name, 'user_ip', $value, $ignore_trace_and_prev);
     }
 
     /**
@@ -80,33 +88,38 @@ class Logger
      *
      *  @param  string  $file_name
      *  @param  string  $value
+     *  @param  bool    $ignore_trace_and_prev
+     *
      *  @return array
      */
-    public function whereUserId(string $file_name, string $value): array
+    public function whereUserId(string $file_name, string $value, bool $ignore_trace_and_prev = false): array
     {
-        return $this->find($file_name, 'user_id', $value);
+        return $this->find($file_name, 'user_id', $value, $ignore_trace_and_prev);
     }
 
     /**
-     *  Method for find a log data, base on its file_name
+     *  Method for find a log data, base on a file where an exception is thrown
      *
      *  @param  string  $file_name
      *  @param  string  $value
+     *  @param  bool    $ignore_trace_and_prev
+     *
      *  @return array
      */
-    public function whereFileName(string $file_name, string $value): array
+    public function whereFileName(string $file_name, string $value, bool $ignore_trace_and_prev = false): array
     {
-        return $this->find($file_name, 'file_name', $value);
+        return $this->find($file_name, 'file_name', $value, $ignore_trace_and_prev);
     }
 
     /**
      *  Method for get the error logs
      *
      *  @param  string  $file_name
-     *  @param  string  $include_trace_and_previous
+     *  @param  string  $ignore_trace_and_prev
+     *
      *  @return array
      */
-    public function get(string $file_name, bool $include_trace_and_previous = false): array
+    public function get(string $file_name, bool $ignore_trace_and_prev = true): array
     {
         $file_path  =   logger_path() . DIRECTORY_SEPARATOR . $file_name;
 
@@ -140,7 +153,7 @@ class Logger
 
                     $key    =   explode(":", $line)[0];
 
-                    if ($include_trace_and_previous === false) {
+                    if ($ignore_trace_and_prev === true) {
                         if ($key === "trace" or $key === "previuos") continue;
                     }
 
@@ -251,7 +264,6 @@ class Logger
         return unlink($path);
     }
 
-
     /**
      *  Method for create a file name
      *
@@ -268,11 +280,13 @@ class Logger
      *  @param  string  $file_name
      *  @param  string  $key
      *  @param  string  $value
+     *  @param  bool    $ignore_trace_and_prev determine whether the exception trace should be ignored or not
+     *
      *  @return array
      */
-    protected function find(string $file_name, string $key, string $value): array
+    protected function find(string $file_name, string $key, string $value, bool $ignore_trace_and_prev = true): array
     {
-        $logs       =   $this->get($file_name, true);
+        $logs       =   $this->get($file_name, $ignore_trace_and_prev);
         $matches    =   [];
 
         array_filter($logs, function (array $data) use ($key, $value, &$matches) {
