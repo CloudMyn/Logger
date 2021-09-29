@@ -27,6 +27,24 @@ class Logger
     }
 
     /**
+     *  Method for find a log base on the given id
+     *
+     *  @param  string  $file_name
+     *  @param  string  $value
+     *  @param  bool    $ignore_trace_and_prev
+     *
+     *  @return array|null
+     */
+    public function findById(string $file_name, string $value)
+    {
+        $results  =  $this->whereId($file_name, $value, false);
+
+        if (count($results) === 0 || count($results) >= 2) return null;
+
+        return $results[0];
+    }
+
+    /**
      *  Method for find a log data, base on its id
      *
      *  @param  string  $file_name
@@ -49,7 +67,7 @@ class Logger
      *
      *  @return array
      */
-    public function whereClass(string $file_name, string $value, bool $ignore_trace_and_prev = false): array
+    public function whereClass(string $file_name, string $value, bool $ignore_trace_and_prev = true): array
     {
         return $this->find($file_name, 'class', $value, $ignore_trace_and_prev);
     }
@@ -63,7 +81,7 @@ class Logger
      *
      *  @return array
      */
-    public function whereMessage(string $file_name, string $value, bool $ignore_trace_and_prev = false): array
+    public function whereMessage(string $file_name, string $value, bool $ignore_trace_and_prev = true): array
     {
         return $this->find($file_name, 'message', $value, $ignore_trace_and_prev);
     }
@@ -77,7 +95,7 @@ class Logger
      *
      *  @return array
      */
-    public function whereIp(string $file_name, string $value, bool $ignore_trace_and_prev = false): array
+    public function whereIp(string $file_name, string $value, bool $ignore_trace_and_prev = true): array
     {
         return $this->find($file_name, 'user_ip', $value, $ignore_trace_and_prev);
     }
@@ -91,7 +109,7 @@ class Logger
      *
      *  @return array
      */
-    public function whereUserId(string $file_name, string $value, bool $ignore_trace_and_prev = false): array
+    public function whereUserId(string $file_name, string $value, bool $ignore_trace_and_prev = true): array
     {
         return $this->find($file_name, 'user_id', $value, $ignore_trace_and_prev);
     }
@@ -105,7 +123,7 @@ class Logger
      *
      *  @return array
      */
-    public function whereFileName(string $file_name, string $value, bool $ignore_trace_and_prev = false): array
+    public function whereFileName(string $file_name, string $value, bool $ignore_trace_and_prev = true): array
     {
         return $this->find($file_name, 'file_name', $value, $ignore_trace_and_prev);
     }
@@ -283,7 +301,7 @@ class Logger
      *
      *  @return array
      */
-    protected function find(string $file_name, string $key, string $value, bool $ignore_trace_and_prev = true): array
+    protected function find(string $file_name, string $key, string $value, bool $ignore_trace_and_prev): array
     {
         $logs       =   $this->get($file_name, $ignore_trace_and_prev);
         $matches    =   [];
