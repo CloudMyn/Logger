@@ -4,7 +4,6 @@ namespace CloudMyn\Logger\Utils;
 
 use CloudMyn\Logger\Exceptions\LogException;
 use Illuminate\Database\Eloquent\Model;
-use phpDocumentor\Reflection\PseudoTypes\True_;
 
 use function CloudMyn\Logger\Helpers\logger_path;
 
