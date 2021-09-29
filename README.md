@@ -55,3 +55,44 @@ class Handler extends ExceptionHandler
 ```
 
 Now you can visit this url **http://locahost:8000/logger/show** where the logs is listed
+
+## List of methods
+
+```PHP
+
+use CloudMyn\Logger\Facade\Logger;
+
+// Method for log an exception or error
+Logger::log($throwable);
+
+// Method for get the log files
+Logger::getLogFiles();
+
+// Method for find a log base on the given id
+Logger::findById($log_filename, $id);
+
+// Method for get the error log by id
+Logger::whereId($log_filename, $id, $ignore_trace_and_prev);
+
+// Method for get the error log by class
+Logger::whereClass($log_filename, $class, $ignore_trace_and_prev);
+
+// Method for get the error log by Message
+Logger::whereMessage($log_filename, $message, $ignore_trace_and_prev);
+
+// Method for get the error log by IP
+Logger::whereIp($log_filename, $ip, $ignore_trace_and_prev);
+
+// Method for get the error log by User Id
+Logger::whereUserId($log_filename, $user_id, $ignore_trace_and_prev);
+
+// Method for get the error log by Filename
+Logger::whereFilename($log_filename, $filename, $ignore_trace_and_prev);
+
+// Method for delete log file
+Logger::delete($filename)
+
+```
+**Note:** third argument of 'where' method is determine whether the return value should be contains 'trace' and 'previous' exception or not, by default this argument is 'true', and we're encourage you to not change the default value, because this may cost your app perfomance 
+
+
