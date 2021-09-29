@@ -93,6 +93,6 @@ Logger::whereFilename($log_filename, $filename, $ignore_trace_and_prev);
 Logger::delete($filename)
 
 ```
-**Note:** third argument of 'where' method is determine whether the return value should be contains 'trace' and 'previous' exception or not, by default this argument is 'true', and we're encourage you to not change the default value, because this may cost your app perfomance 
+**Note:** third argument of 'where' methods is determine whether the return value should be contains 'trace' and 'previous' exception or not, by default this argument is 'true', and we're encourage you to not change the default value, because this may cost your app perfomance 
 
 
