@@ -94,17 +94,35 @@ use function CloudMyn\Logger\Helpers\str_limit;
         <tbody>
             @foreach ($logs as $log)
                 <tr>
-                    <td>{{ str_limit($log['id'], 10, '...') }}</td>
-                    <td>{{ str_limit($log['class'], 25, '...') }}</td>
-                    <td>{{ str_limit($log['message'], 25, '...') }}</td>
-                    <td>{{ $log['user_ip'] }}</td>
-                    <td>{{ $log['user_id'] }}</td>
-                    <td>{{ str_limit($log['file_name'], 25, '...') . ':' . $log['file_line'] }}</td>
-                    <td>{{ date('Y-M-d s:i', (int) $log['create_at']) }}</td>
+                    <?php
+
+                        try {
+
+                            $log_id     =   array_key_exists('id',$log) ? $log['id'] : 'empty';
+                            $class      =   array_key_exists('class',$log) ? $log['class'] : 'empty';
+                            $file_name  =   array_key_exists('file_name',$log) ? $log['file_name'] : 'empty';
+                            $file_line  =   array_key_exists('file_line',$log) ? $log['file_line'] : 'empty';
+                            $user_ip    =   array_key_exists('user_ip',$log) ? $log['user_ip'] : 'empty';
+                            $user_id    =   array_key_exists('user_id',$log) ? $log['user_id'] : 'empty';
+                            $created_at =   array_key_exists('created_at',$log) ? $log['created_at'] : 'empty';
+                            $code       =   array_key_exists('code',$log) ? $log['code'] : 'empty';
+                            $message    =   array_key_exists('message',$log) ? $log['message'] : 'empty';
+
+                            // ...
+                        } catch (\Throwable $th) {
+
+                        }
+                    ?>
+
+                    <td>{{ str_limit($log_id, 5, '...') }}</td>
+                    <td>{{ str_limit($class, 25, '...') }}</td>
+                    <td>{{ str_limit($message, 25, '...') }}</td>
+                    <td>{{ $user_ip }}</td>
+                    <td>{{ $user_id }}</td>
+                    <td>{{ str_limit($file_name, 25, '...') . ':' . $file_line }}</td>
+                    <td>{{ date('Y-M-d s:i', (int) $created_at) }}</td>
                     <td>
-                        @php
-                            $log_id = $log['id'];
-                        @endphp
+
                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                             data-bs-target="#m{{ $loop->count }}"
                             onclick='fetchTrace( "{{ $c_file }}", "{{ $log_id }}", "modal-stacktrace-{{ $loop->count }}" )'>
@@ -119,7 +137,7 @@ use function CloudMyn\Logger\Helpers\str_limit;
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="staticBackdropLabel">
-                                            {{ $log['class'] . ':' . $log['code'] }}</h5>
+                                            {{ $class . ':' . $code }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
@@ -132,22 +150,22 @@ use function CloudMyn\Logger\Helpers\str_limit;
                                         <div class="mt-2">
                                             <label for="_message" class="form-label"><b>Message</b></label>
                                             <input type="text" id="_message" class="form-control" disabled
-                                                value="{{ $log['message'] }}">
+                                                value="{{ $message }}">
                                         </div>
                                         <div class="mt-2">
                                             <label for="_file" class="form-label"><b>File</b></label>
                                             <input type="text" id="_file" class="form-control" disabled
-                                                value="{{ $log['file_name'] . ':' . $log['file_line'] }}">
+                                                value="{{ $file_name . ':' . $file_line }}">
                                         </div>
                                         <div class="mt-2">
                                             <label for="_user_id" class="form-label"><b>User Id</b></label>
                                             <input type="text" id="_user_id" class="form-control" disabled
-                                                value="{{ $log['user_id'] }}">
+                                                value="{{ $user_id }}">
                                         </div>
                                         <div class="mt-2">
                                             <label for="_user_ip" class="form-label"><b>IP address</b></label>
                                             <input type="text" id="_user_ip" class="form-control" disabled
-                                                value="{{ $log['user_ip'] }}">
+                                                value="{{ $user_ip }}">
                                         </div>
                                         <div class=" mt-2" id="modal-stacktrace-{{ $loop->count }}">
                                             Loading...
