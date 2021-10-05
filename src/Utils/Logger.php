@@ -239,7 +239,7 @@ class Logger
             previuos:   $exception_previous;
             file_name:  $_file_name;
             file_line:  $file_line;
-            create_at:  $create_at;
+            created_at: $create_at;
             [Exception:End]
             EOD;
 
