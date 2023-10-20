@@ -197,7 +197,7 @@ class Logger
      *  @param  mixed|null callback
      *  @return void
      */
-    public function log(\Throwable $throwable, ?Model $user = null, $callback = null): void
+    public function log(\Throwable $throwable, ?Model $user = null, mixed $callback = null): void
     {
         if ($throwable instanceof LogException) return;
 

@@ -62,7 +62,7 @@ class LoggerServiceProvider extends ServiceProvider
     {
         return [
             'prefix' => config('logger.previx', ''),
-            'middleware' => config('logger.mdl', []),
+            'middleware' => config('logger.middleware', []),
         ];
     }
 }
