@@ -262,7 +262,9 @@ class Logger
 
             fclose($file);
 
-            $callback($exception_id);
+            if($callback !== null) {
+                $callback($exception_id);
+            }
 
             // ...
         } catch (\Throwable $th) {
