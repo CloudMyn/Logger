@@ -2,6 +2,7 @@
 
 namespace CloudMyn\Logger\Utils;
 
+use Carbon\Carbon;
 use CloudMyn\Logger\Exceptions\LogException;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,7 +10,6 @@ use function CloudMyn\Logger\Helpers\logger_path;
 
 class Logger
 {
-
     /**
      *  Method for get log files
      *
@@ -19,7 +19,9 @@ class Logger
     {
         $log_path = logger_path();
 
-        if (!file_exists($log_path)) return [];
+        if (!file_exists($log_path)) {
+            return [];
+        }
 
         $dirs =  array_values(array_diff(scandir($log_path), array('.', '..')));
 
@@ -39,7 +41,9 @@ class Logger
     {
         $results  =  $this->whereId($file_name, $value, false);
 
-        if (count($results) === 0 || count($results) >= 2) return null;
+        if (count($results) === 0 || count($results) >= 2) {
+            return null;
+        }
 
         return $results[0];
     }
@@ -140,13 +144,16 @@ class Logger
     {
         $file_path  =   logger_path() . DIRECTORY_SEPARATOR . $file_name;
 
-        if (!file_exists($file_path) || empty($file_name)) return [];
+        if (!file_exists($file_path) || empty($file_name)) {
+            return [];
+        }
 
         $byte  = filesize($file_path);
 
         // jika ukuran file melebihi 800MB than thrown exception
-        if (floatval($byte) >= (1048576 * 800))
+        if (floatval($byte) >= (1048576 * 800)) {
             throw new LogException("The file is to big!");
+        }
 
         $file   =   fopen($file_path, "r");
 
@@ -171,7 +178,9 @@ class Logger
                     $key    =   explode(":", $line)[0];
 
                     if ($ignore_trace_and_prev === true) {
-                        if ($key === "trace" or $key === "previuos") continue;
+                        if ($key === "trace" or $key === "previuos") {
+                            continue;
+                        }
                     }
 
                     $value  =   trim(preg_split("/^([\w]+:)/", $line)[1]);
@@ -186,7 +195,7 @@ class Logger
 
         fclose($file);
 
-        return $log_data;
+        return array_reverse($log_data);
     }
 
     /**
@@ -198,7 +207,9 @@ class Logger
      */
     public function log(\Throwable $throwable, ?Model $user = null): void
     {
-        if ($throwable instanceof LogException) return;
+        if ($throwable instanceof LogException) {
+            return;
+        }
 
         try {
 
@@ -219,12 +230,9 @@ class Logger
             $_file_name =   $throwable->getFile();
             $file_line  =   $throwable->getLine();
 
-            $create_at  =   time();
+            $create_at  =   Carbon::now();
 
-            $str = base64_encode($exception_class);
-            $str = str_replace("=", '1', $str);
-
-            $exception_id = uniqid("$str.");
+            $exception_id = strtoupper(rand(100, 999) . uniqid() . rand(10, 99));
 
             $content = <<<EOD
             \n
@@ -276,7 +284,9 @@ class Logger
         $log_path = logger_path();
         $path = $log_path . DIRECTORY_SEPARATOR . $file_name;
 
-        if (!file_exists($path)) return false;
+        if (!file_exists($path)) {
+            return false;
+        }
 
         return unlink($path);
     }
@@ -307,11 +317,25 @@ class Logger
         $matches    =   [];
 
         array_filter($logs, function (array $data) use ($key, $value, &$matches) {
+
             if (array_key_exists($key, $data)) {
-                if ($data[$key] === $value) {
-                    $matches[] = $data;
-                }
+
+                // if (strtolower($data[$key]) === strtolower($value)) {
+                //     $matches[] = $data;
+                // }
+
+                // Create a regular expression pattern with the keyword and wildcards
+                $pattern = "/.*" . preg_quote($value, '/') . ".*/i";
+
+                // Use preg_match_all to find matching substrings in the paragraph
+                if (preg_match_all($pattern, $data[$key], $_matches)) {
+                    foreach ($_matches[0] as $match) {
+                        $matches[] = $data;
+                    }
+                } 
+
             }
+
         });
 
         return $matches;
