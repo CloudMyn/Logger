@@ -27,6 +27,8 @@ class LoggerController  extends Controller
     {
         $log = Logger::whereId($filename, $id);
 
+        $view = config('logger.trace_view', 'cloudmyn_logger::components.stack-trace');
+
         if (count($log) === 0) return "No-Data";
 
         try {
@@ -35,7 +37,7 @@ class LoggerController  extends Controller
             $traces = [];
         }
 
-        return view('cloudmyn_logger::components.stack-trace', [
+        return view($view, [
             'traces'   =>  $traces,
         ]);
     }

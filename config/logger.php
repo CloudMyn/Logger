@@ -4,7 +4,12 @@
 return [
 
     /**
-     *  Define the previx of the route
+     *  Enable bases route
+     */
+    'enable_route' => true,
+
+    /**
+     *  Define the prefix of the route
      */
     'prefix'    =>  'logger',
 
@@ -12,5 +17,10 @@ return [
      *  Define the middleware of the page route
      */
     'middleware'    => [],
+
+    /**
+     *  Override stack trace view
+     */
+    'trace_view' => 'cloudmyn_logger::components.stack-trace',
 
 ];

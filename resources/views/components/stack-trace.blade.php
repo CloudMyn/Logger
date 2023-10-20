@@ -1,6 +1,10 @@
-<label for="stack_trace" class="form-label"><b>Stack
-        Trace</b></label>
-<div>
+<label for="stack_trace" class="form-label">
+
+    <b>Stack Trace</b>
+
+</label>
+
+<div style="width: 100%">
 
     @forelse ($traces as $trace)
         <div class="alert alert-warning">
@@ -25,3 +29,5 @@
     @endforelse
 
 </div>
+
+
