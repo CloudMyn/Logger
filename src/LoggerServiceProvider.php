@@ -53,16 +53,18 @@ class LoggerServiceProvider extends ServiceProvider
 
     protected function registerRoutes(): void
     {
-        Route::middleware($this->routeConfiguration()[1])->group($this->routeConfiguration()[0], function () {
+        Route::middleware($this->routeConfiguration('middleware'))->group($this->routeConfiguration('prefix'), function () {
             $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
         });
     }
 
-    protected function routeConfiguration(): array
+    protected function routeConfiguration($key)
     {
-        return [
+        $config = [
             'prefix' => config('logger.previx', ''),
             'middleware' => config('logger.middleware', []),
         ];
+
+        return $config[$key];
     }
 }
