@@ -194,10 +194,9 @@ class Logger
      *
      *  @param  \Throwable  $throwable represent Exception|Error
      *  @param  \Illuminate\Database\Eloquent\Model $user the user who caused the error
-     *  @param  mixed|null callback
      *  @return void
      */
-    public function log(\Throwable $throwable, ?Model $user = null, mixed $callback = null): void
+    public function log(\Throwable $throwable, ?Model $user = null): void
     {
         if ($throwable instanceof LogException) return;
 
@@ -222,7 +221,7 @@ class Logger
 
             $create_at  =   time();
 
-            $str = base64_encode($exception_class) . rand(100000, 999999);
+            $str = base64_encode($exception_class);
             $str = str_replace("=", '1', $str);
 
             $exception_id = uniqid("$str.");
@@ -240,7 +239,7 @@ class Logger
             previuos:   $exception_previous;
             file_name:  $_file_name;
             file_line:  $file_line;
-            created_at: $create_at;
+            create_at:  $create_at;
             [Exception:End]
             EOD;
 
@@ -261,10 +260,6 @@ class Logger
             fwrite($file, $content);
 
             fclose($file);
-
-            if($callback !== null) {
-                $callback($exception_id);
-            }
 
             // ...
         } catch (\Throwable $th) {

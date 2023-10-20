@@ -6,7 +6,7 @@ return [
     /**
      *  Define the previx of the route
      */
-    'previx'    =>  'logger',
+    'prefix'    =>  'logger',
 
     /**
      *  Define the middleware of the page route

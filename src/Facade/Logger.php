@@ -5,7 +5,7 @@ namespace CloudMyn\Logger\Facade;
 use Illuminate\Support\Facades\Facade;
 
 /**
- *  @method static void log(\Throwable $throwable, ?\Illuminate\Database\Eloquent\Model $user, ?mixed $calbback)
+ *  @method static void log(\Throwable $throwable, ?\Illuminate\Database\Eloquent\Model $user)
  *  @method static array get(string $file_name) Method for get the error logs
  *  @method static array<string>|array<null> getLogFiles() Method for get log files
  *  @method static array findById(string $file_name, string $value) Method for find a log base on the given id

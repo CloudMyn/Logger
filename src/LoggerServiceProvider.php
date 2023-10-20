@@ -4,6 +4,7 @@
 namespace CloudMyn\Logger;
 
 use CloudMyn\Logger\Utils\Logger;
+use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,9 +21,6 @@ class LoggerServiceProvider extends ServiceProvider
 
         // load views
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'cloudmyn_logger');
-
-        
-        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 
         // publish configuration and migration
         // cmd: php artisan vendor:publish --provider="CloudMyn\Logger\LoggerServiceProvider" --tag="config"
@@ -53,18 +51,18 @@ class LoggerServiceProvider extends ServiceProvider
 
     protected function registerRoutes(): void
     {
-        Route::middleware($this->routeConfiguration('middleware'))->group($this->routeConfiguration('prefix'), function () {
-            $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
-        });
+        if(config('logger.enable_route', false) === true) {
+            Route::group($this->routeConfiguration(), function () {
+                $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+            });
+        }
     }
 
-    protected function routeConfiguration($key)
+    protected function routeConfiguration(): array
     {
-        $config = [
-            'prefix' => config('logger.previx', ''),
+        return [
+            'prefix' => config('logger.prefix', ""),
             'middleware' => config('logger.middleware', []),
         ];
-
-        return $config[$key];
     }
 }
