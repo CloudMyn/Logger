@@ -11,6 +11,6 @@ return [
     /**
      *  Define the middleware of the page route
      */
-    'middleware'    => [],
+    'mdl'    => [],
 
 ];

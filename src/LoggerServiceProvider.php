@@ -21,6 +21,9 @@ class LoggerServiceProvider extends ServiceProvider
         // load views
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'cloudmyn_logger');
 
+        
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+
         // publish configuration and migration
         // cmd: php artisan vendor:publish --provider="CloudMyn\Logger\LoggerServiceProvider" --tag="config"
         if ($this->app->runningInConsole()) {
@@ -50,7 +53,7 @@ class LoggerServiceProvider extends ServiceProvider
 
     protected function registerRoutes(): void
     {
-        Route::group($this->routeConfiguration(), function () {
+        Route::middleware($this->routeConfiguration()[1])->group($this->routeConfiguration()[0], function () {
             $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
         });
     }
@@ -59,7 +62,7 @@ class LoggerServiceProvider extends ServiceProvider
     {
         return [
             'prefix' => config('logger.previx', ''),
-            'middleware' => config('logger.middleware', []),
+            'middleware' => config('logger.mdl', []),
         ];
     }
 }
