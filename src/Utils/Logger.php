@@ -165,10 +165,10 @@ class Logger
                 $line = fgets($file);
 
                 switch ($line) {
-                    case str_contains($line, "[Exception:Start]"):
+                    case str_contains($line, "[Log::start]"):
                         $log_data[$index] = [];
                         break;
-                    case str_contains($line, "[Exception:End]"):
+                    case str_contains($line, "[Log::end]"):
                         $index++;
                         break;
                 }
@@ -221,8 +221,10 @@ class Logger
             $user_ip    =   request()->ip() ?? "0.0.0.0";
             $user_id    =   $user instanceof Model ? $user->getKey() : 'null';
 
+            $exception_message  =   str_replace(array("\r", "\n"), ' ', $throwable->getMessage());
+            $exception_message  =    preg_replace('/\s+/', ' ', $exception_message);
+            
             $exception_class    =   get_class($throwable);
-            $exception_message  =   $throwable->getMessage();
             $exception_code     =   $throwable->getCode();
             $exception_trace    =   json_encode($throwable->getTrace());
             $exception_previous =   json_encode($throwable->getPrevious());
@@ -236,7 +238,7 @@ class Logger
 
             $content = <<<EOD
             \n
-            [Exception:Start]
+            [Log::start]
             id:         $exception_id;
             class:      $exception_class;
             message:    $exception_message;
@@ -248,7 +250,7 @@ class Logger
             file_name:  $_file_name;
             file_line:  $file_line;
             create_at:  $create_at;
-            [Exception:End]
+            [Log::end]
             EOD;
 
             $permission = "a";
