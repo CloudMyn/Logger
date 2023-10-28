@@ -223,6 +223,10 @@ class Logger
 
             $exception_message  =   str_replace(array("\r", "\n"), ' ', $throwable->getMessage());
             $exception_message  =    preg_replace('/\s+/', ' ', $exception_message);
+
+            if($exception_message === null || $exception_message === "") {
+                $exception_message = "-";
+            }
             
             $exception_class    =   get_class($throwable);
             $exception_code     =   $throwable->getCode();
